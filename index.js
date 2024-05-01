@@ -1,10 +1,9 @@
-
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     try {
         const searchParams = new URLSearchParams(window.location.search);
         let params = []
         for (const param of searchParams) {
-          params.push(param[0]);
+            params.push(param[0]);
         }
         console.log(params);
 
@@ -16,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('shortenForm');
 
     // Empêcher le formulaire de se soumettre normalement
-    form.addEventListener('submit', function(event) {
+    form.addEventListener('submit', function (event) {
         event.preventDefault();
 
         // Récupérer l'URL saisie par l'utilisateur
@@ -42,7 +41,7 @@ function shortenUrl(url) {
         // For demonstration purposes, let's just log the URL to be shortened
         console.log('URL to be shortened:', url, 'ID :', urlID);
         insertDiv.innerHTML = urlID;
-
+        sauvegarderDansFichier(urlID, url);
 
         // Simulating an error for demonstration
         if (url === '') {
@@ -71,3 +70,22 @@ function generateIDFromString(str) {
     id = id.padEnd(4 + str.length % 5, '0');
     return id;
 }
+
+
+function sauvegarderDansFichier(id, url) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'save.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            console.log(xhr.responseText);
+        }
+    };
+    xhr.send('id=' + encodeURIComponent(id) + '&url=' + encodeURIComponent(url));
+}
+
+// Exemple d'utilisation
+var urlID = 'ID_généré';
+var url = 'http://example.com';
+sauvegarderDansFichier(urlID, url);
+
