@@ -27,8 +27,6 @@ function verifyUrlParams() {
     }
 }
 
-
-// Function to generate a unique shortened URL code
 function generateID($str) : string {
     $hash = hash('md5', $str); // Using MD5 hash as an example
     // Convert hexadecimal hash to base 36

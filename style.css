@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
 }
+
 a {
     text-decoration: none;
     color: #007bff;
@@ -42,6 +43,7 @@ input[type="url"] {
     border-radius: 5px;
     text-align: center;
 }
+
 label {
     font-size: 1.5em;
 }
@@ -72,6 +74,7 @@ button:active {
     padding-bottom: 1em;
     font-size: 0.75em;
 }
+
 .link span {
     font-weight: bold;
     display: block;
