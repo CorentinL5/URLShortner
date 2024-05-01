@@ -1,23 +1,32 @@
 <?php
 $filename = 'urls.json';
+$domain = 'http://localhost:63342/URLShortner/';
+$params = getParams();
+
+function getParams(): array {
+    $searchParams = [];
+    parse_str($_SERVER['QUERY_STRING'], $searchParams);
+    return array_keys($searchParams);
+}
 
 function verifyUrlParams() {
-    $searchParams = [];
-    $goodParams = [];
-    parse_str($_SERVER['QUERY_STRING'], $searchParams);
-    $params = array_keys($searchParams);
+    $links = [];
+    global $params;
+
     foreach ($params as $param) {
         if (isStored($param)) {
-            $url = getUrlWithParam($param);
-            echo "<script> whindow.location.href = '$url'; </script>";
-        } else {
-            if ($param == 'none') {
-                showForm();
-                exit;
-            }
+            $links[] = getUrlWithParam($param);
         }
     }
+    if (sizeof($params) == 0 || in_array("none", $params)) {
+        showLinks($links);
+        showForm();
+    } else {
+        $url = strval($links[0]);
+        echo "<script> location.replace('$url'); </script>";
+    }
 }
+
 
 // Function to generate a unique shortened URL code
 function generateID($str) : string {
@@ -46,7 +55,8 @@ function saveURL($originalURL, $shortID) {
     }
 }
 
-function isStored($id) {
+function isStored($id): bool
+{
     global $filename;
     $urls = getFileContent($filename);
     // Check if the ID already exists in the array
@@ -76,11 +86,19 @@ function fileExist() {
 }
 
 function showForm() {
-    echo "<script>console.log('showForm');</script>";
+    echo '<form method="post" action="shorten.php">';
+    echo '<label for="url">Enter URL to shorten:</label><br>';
+    echo '<input type="url" id="url" name="url" required><br><br>';
+    echo '<button type="submit">Shorten</button>';
+    echo '</form>';
 }
 
-function showLinks() {
-    echo "<script>console.log('showLinks');</script>";
+function showLinks($links) {
+    global $domain;
+    foreach ($links as $link) {
+        $id = generateID($link);
+        echo "<p class='link'> <span>Shortened URL</span> <a href='$link'>$domain?$id</a> </p>";
+    }
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -92,9 +110,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     saveURL($originalURL, $shortID);
 
+    $finishParams = "?none&$shortID";
 
     // Redirect to the index page with the short URL appended as a query parameter
-    header("Location: index.php?$shortID&none");
+    echo "<script> location.replace('index.php$finishParams'); </script>";
 
     exit();
 }
